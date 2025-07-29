@@ -207,9 +207,15 @@ function loadTrades() {
 }
 
 function setDefaultFormValues() {
+  const {monday, friday} = getLastWeekDates();
+  document.getElementById('ticker').value = 'GME';
+  document.getElementById('openDate').value = formatDate(monday);
+  document.getElementById('closeDate').value = formatDate(friday);
+  document.getElementById('strike').value = '25';
+  document.getElementById('premium').value = '0.10';
   document.getElementById('buyback').value = '0.01';
-  document.getElementById('quantity').value = '1';
-  document.getElementById('commissions').value = '0';
+  document.getElementById('quantity').value = '10';
+  document.getElementById('commissions').value = '10';
 }
 
 function ensurePresetTrade() {
