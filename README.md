@@ -1,6 +1,6 @@
 # ThetaTime Dashboard
 
-A simple single-page web app for tracking closed options trades. Add trades manually or import from a CSV file and view summary statistics and charts.
+A simple single-page web app for tracking closed options trades. Add trades manually or import from a CSV file and view summary statistics and charts. The interface now features a modern dark theme with responsive cards and tables.
 
 ## Usage
 
