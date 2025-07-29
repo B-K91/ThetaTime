@@ -185,7 +185,7 @@ function drawLineChart() {
       labels,
       datasets: [{
         data,
-        borderColor: '#00c853',
+        borderColor: '#2196f3',
         tension: 0.3,
         fill: false
       }]
@@ -218,7 +218,7 @@ function drawBarChart() {
       labels: labels.map(formatMonthYear),
       datasets: [{
         data,
-        backgroundColor: data.map(v => v >= 0 ? 'rgba(0,200,83,0.7)' : 'rgba(239,68,68,0.7)')
+        backgroundColor: data.map(v => v >= 0 ? 'rgba(33,150,243,0.7)' : 'rgba(33,150,243,0.3)')
       }]
     },
     options: {

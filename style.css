@@ -144,11 +144,17 @@ button:hover { background: #1de9d0; transform: translateY(-2px); }
   text-align: left;
 }
 .graphs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.graph-card {
   background: var(--card-bg);
   backdrop-filter: blur(12px);
   padding: 1rem;
   border-radius: 8px;
-  margin-top: 1rem;
   box-shadow: var(--shadow-lg);
 }
 canvas {
