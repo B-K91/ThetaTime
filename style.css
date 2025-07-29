@@ -125,6 +125,31 @@ button:hover { background: #02b14f; }
   margin-top: 1rem;
   box-shadow: 0 2px 6px rgba(0,0,0,0.4);
 }
+canvas {
+  width: 100%;
+  height: auto;
+}
+
+#trade-table tr.profit {
+  background: rgba(0, 200, 83, 0.1);
+}
+
+#trade-table tr.loss {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+#trade-table tr.profit td:last-child,
+#trade-table tr.loss td:last-child {
+  font-weight: 600;
+}
+
+#trade-table tr.profit td:last-child {
+  color: #00c853;
+}
+
+#trade-table tr.loss td:last-child {
+  color: #ef4444;
+}
 footer {
   margin-top: 1rem;
   text-align: center;

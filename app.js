@@ -50,8 +50,10 @@ function parseCSV(text) {
 
 function addTrade(t) {
   t.id = Date.now() + Math.random();
-  const perContract = (t.premium - (t.buyback || 0)) * 100 - (t.commissions || 0);
-  t.net = perContract * (t.qty || 1);
+  t.qty = t.qty || 1;
+  t.commissions = t.commissions || 0;
+  const gross = (t.premium - (t.buyback || 0)) * 100 * t.qty;
+  t.net = gross - t.commissions;
   trades.push(t);
   saveTrades();
   updateTable();
@@ -146,11 +148,13 @@ function drawLineChart() {
   const pad = 40;
   const w = lineCanvas.width - pad*2;
   const h = lineCanvas.height - pad*2;
+  const rangeX = (maxDate - minDate) || 1;
+  const rangeY = (maxY - minY) || 1;
   ctx.strokeStyle = '#00c853';
   ctx.beginPath();
   points.forEach((p,i)=>{
-    const x = pad + (p.date-minDate)/(maxDate-minDate)*w;
-    const y = pad + h - (p.value-minY)/(maxY-minY)*h;
+    const x = pad + (p.date-minDate)/rangeX*w;
+    const y = pad + h - (p.value-minY)/rangeY*h;
     if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
   });
   ctx.stroke();
@@ -169,13 +173,14 @@ function drawBarChart() {
   const pad = 40;
   const w = barCanvas.width - pad*2;
   const h = barCanvas.height - pad*2;
-  const maxVal = Math.max(...entries.map(e=>e[1]), 0);
+  const maxVal = Math.max(...entries.map(e=>Math.abs(e[1])), 1);
   const barWidth = w/entries.length*0.6;
   entries.forEach(([m,v],i)=>{
     const x = pad + i*(w/entries.length) + barWidth*0.2;
-    const y = pad + h - (v/maxVal)*h;
+    const barHeight = (Math.abs(v)/maxVal)*h;
+    const y = pad + h - barHeight;
     ctx.fillStyle = v>=0? 'rgba(0,200,83,0.7)' : 'rgba(239,68,68,0.7)';
-    ctx.fillRect(x,y,barWidth,(v/maxVal)*h);
+    ctx.fillRect(x,y,barWidth,barHeight);
     ctx.fillStyle = '#fff';
     ctx.fillText(m, x, h + pad + 10);
   });
