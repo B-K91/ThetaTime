@@ -105,7 +105,10 @@ function updateSummary() {
     const m = t.closeDate.slice(0,7); // YYYY-MM
     monthly[m] = (monthly[m] || 0) + t.net;
   }
-  const rows = Object.entries(monthly).sort().map(([m,v])=>`<div>${m}: $${v.toFixed(2)}</div>`).join('');
+  const rows = Object.entries(monthly)
+    .sort()
+    .map(([m,v]) => `<div>${formatMonthYear(m)}: $${v.toFixed(2)}</div>`)
+    .join('');
   monthlySummaryEl.innerHTML = rows;
 }
 
@@ -141,6 +144,7 @@ function drawLineChart() {
     },
     options: {
       responsive: true,
+      plugins: { legend: { display: false } },
       scales: {
         x: { display: true },
         y: { display: true }
@@ -163,7 +167,7 @@ function drawBarChart() {
   barChart = new Chart(barCanvas, {
     type: 'bar',
     data: {
-      labels,
+      labels: labels.map(formatMonthYear),
       datasets: [{
         data,
         backgroundColor: data.map(v => v >= 0 ? 'rgba(0,200,83,0.7)' : 'rgba(239,68,68,0.7)')
@@ -171,6 +175,7 @@ function drawBarChart() {
     },
     options: {
       responsive: true,
+      plugins: { legend: { display: false } },
       scales: {
         x: { display: true },
         y: { display: true }
@@ -250,4 +255,10 @@ function formatDate(d) {
   const month = String(d.getMonth() + 1).padStart(2, '0');
   const day = String(d.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
+}
+
+function formatMonthYear(key) {
+  const [y, m] = key.split('-');
+  const date = new Date(y, parseInt(m) - 1);
+  return date.toLocaleString('default', { month: 'long', year: 'numeric' });
 }
