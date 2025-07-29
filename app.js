@@ -85,18 +85,13 @@ function updateSummary() {
     monthlySummaryEl.innerHTML = '';
     return;
   }
-  const totalProfit = trades.reduce((s,t) => s + t.net, 0);
-  const avgPremium = trades.reduce((s,t) => s + t.premium, 0) / trades.length;
-  const durations = trades.map(t => (new Date(t.closeDate) - new Date(t.openDate))/86400000);
-  const avgDuration = durations.reduce((a,b)=>a+b,0)/durations.length;
-  const wins = trades.filter(t => t.net > 0).length;
-  const winRate = wins / trades.length * 100;
+  const totalProfit = trades.reduce((s, t) => s + t.net, 0);
+  const totalCapital = trades.reduce((s, t) => s + (t.strike * 100 * t.qty), 0);
+  const winRate = totalCapital ? (totalProfit / totalCapital) * 100 : 0;
+
   const cards = [
-    {label:'Total Profit', value: '$' + totalProfit.toFixed(2)},
-    {label:'Avg Premium', value: avgPremium.toFixed(2)},
-    {label:'Trades', value: trades.length},
-    {label:'Avg Duration', value: avgDuration.toFixed(1) + 'd'},
-    {label:'Win Rate', value: winRate.toFixed(1) + '%'}
+    { label: 'Total Profit', value: '$' + totalProfit.toFixed(2) },
+    { label: 'Win Rate', value: winRate.toFixed(1) + '%' }
   ];
   summaryEl.innerHTML = cards.map(c => `<div class="summary-card"><h3>${c.label}</h3><p>${c.value}</p></div>`).join('');
 

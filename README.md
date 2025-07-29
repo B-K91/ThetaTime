@@ -11,7 +11,7 @@ Open `index.html` in a browser. No build step or dependencies are required.
 - Manual form entry of closed trades
 - Automatic net profit calculation per trade
 - Scrollable, sortable trade table with profit/loss colors
-- Summary cards for total profit, average premium, trade count, average duration, win rate
+- Summary cards for total profit and cumulative profit percentage
 - Line chart of cumulative profit
 - Bar chart of monthly P&L
 - Interactive charts powered by Chart.js
