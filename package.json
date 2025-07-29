@@ -1,0 +1,8 @@
+{
+  "name": "thetatime",
+  "version": "1.0.0",
+  "description": "Dashboard for tracking options trades",
+  "scripts": {
+    "test": "node test/test.js"
+  }
+}

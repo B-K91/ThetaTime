@@ -6,38 +6,6 @@ const monthlySummaryEl = document.getElementById('monthly-summary');
 const csvInput = document.getElementById('csvFile');
 const lineCanvas = document.getElementById('profit-line');
 const barCanvas = document.getElementById('monthly-bar');
-
-// Set preset default values for the trade form inputs
-function setDefaultFormValues() {
-  document.getElementById('ticker').value = 'GME';
-  document.getElementById('strategy').value = 'Covered Call';
-
-  const formatDate = d => d.toISOString().slice(0, 10);
-
-  const today = new Date();
-  const day = today.getDay();
-
-  const mondayThisWeek = new Date(today);
-  mondayThisWeek.setDate(today.getDate() - ((day + 6) % 7));
-
-  const lastMonday = new Date(mondayThisWeek);
-  lastMonday.setDate(mondayThisWeek.getDate() - 7);
-
-  const lastFriday = new Date(lastMonday);
-  lastFriday.setDate(lastMonday.getDate() + 4);
-
-  document.getElementById('openDate').value = formatDate(lastMonday);
-  document.getElementById('closeDate').value = formatDate(lastFriday);
-
-  document.getElementById('strike').value = 25;
-  document.getElementById('premium').value = 0.10;
-  document.getElementById('buyback').value = 0.1;
-  document.getElementById('quantity').value = 10;
-  document.getElementById('commissions').value = 10;
-}
-
-setDefaultFormValues();
-
 form.addEventListener('submit', e => {
   e.preventDefault();
   const trade = {
@@ -85,6 +53,7 @@ function addTrade(t) {
   const perContract = (t.premium - (t.buyback || 0)) * 100 - (t.commissions || 0);
   t.net = perContract * (t.qty || 1);
   trades.push(t);
+  saveTrades();
   updateTable();
   updateSummary();
   drawCharts();
@@ -118,6 +87,7 @@ function deleteTrade(id) {
   const idx = trades.findIndex(tr => tr.id === id);
   if (idx !== -1) {
     trades.splice(idx, 1);
+    saveTrades();
     updateTable();
     updateSummary();
     drawCharts();
