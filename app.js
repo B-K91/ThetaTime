@@ -5,6 +5,9 @@ const summaryEl = document.getElementById('summary');
 const monthlySummaryEl = document.getElementById('monthly-summary');
 const lineCanvas = document.getElementById('profit-line');
 const barCanvas = document.getElementById('monthly-bar');
+const editBtn = document.getElementById('edit-btn');
+const saveBtn = document.getElementById('save-btn');
+let isEditing = false;
 let lineChart;
 let barChart;
 
@@ -14,6 +17,21 @@ updateTable();
 updateSummary();
 drawCharts();
 setDefaultFormValues();
+editBtn.addEventListener('click', () => {
+  isEditing = true;
+  editBtn.style.display = 'none';
+  saveBtn.style.display = 'inline-block';
+  updateTable();
+});
+saveBtn.addEventListener('click', () => {
+  saveEdits();
+  isEditing = false;
+  saveBtn.style.display = 'none';
+  editBtn.style.display = 'inline-block';
+  updateTable();
+  updateSummary();
+  drawCharts();
+});
 form.addEventListener('submit', e => {
   e.preventDefault();
   const trade = {
@@ -51,19 +69,35 @@ function updateTable() {
   for (const t of trades) {
     const tr = document.createElement('tr');
     tr.className = t.net >= 0 ? 'profit' : 'loss';
-    tr.innerHTML = `
-      <td>${t.ticker}</td>
-      <td>${t.openDate}</td>
-      <td>${t.closeDate}</td>
-      <td>$${t.strike.toFixed(2)}</td>
-      <td>${t.premium.toFixed(2)}</td>
-      <td>${t.buyback.toFixed(2)}</td>
-      <td>${t.qty}</td>
-      <td>$${t.commissions.toFixed(2)}</td>
-      <td>$${t.net.toFixed(2)}</td>
-      <td><button class="delete-btn" data-id="${t.id}" title="Delete">&times;</button></td>
-    `;
-    tr.querySelector('.delete-btn').addEventListener('click', () => deleteTrade(t.id));
+    tr.dataset.id = t.id;
+    if (isEditing) {
+      tr.innerHTML = `
+        <td contenteditable data-field="ticker">${t.ticker}</td>
+        <td contenteditable data-field="openDate">${t.openDate}</td>
+        <td contenteditable data-field="closeDate">${t.closeDate}</td>
+        <td contenteditable data-field="strike">${t.strike.toFixed(2)}</td>
+        <td contenteditable data-field="premium">${t.premium.toFixed(2)}</td>
+        <td contenteditable data-field="buyback">${t.buyback.toFixed(2)}</td>
+        <td contenteditable data-field="qty">${t.qty}</td>
+        <td contenteditable data-field="commissions">${t.commissions.toFixed(2)}</td>
+        <td>$${t.net.toFixed(2)}</td>
+        <td><button class="delete-btn" data-id="${t.id}" title="Delete">&times;</button></td>
+      `;
+      tr.querySelector('.delete-btn').addEventListener('click', () => deleteTrade(t.id));
+    } else {
+      tr.innerHTML = `
+        <td>${t.ticker}</td>
+        <td>${t.openDate}</td>
+        <td>${t.closeDate}</td>
+        <td>$${t.strike.toFixed(2)}</td>
+        <td>${t.premium.toFixed(2)}</td>
+        <td>${t.buyback.toFixed(2)}</td>
+        <td>${t.qty}</td>
+        <td>$${t.commissions.toFixed(2)}</td>
+        <td>$${t.net.toFixed(2)}</td>
+        <td></td>
+      `;
+    }
     tableBody.appendChild(tr);
   }
 }
@@ -77,6 +111,28 @@ function deleteTrade(id) {
     updateSummary();
     drawCharts();
   }
+}
+
+function saveEdits() {
+  const rows = tableBody.querySelectorAll('tr');
+  rows.forEach(row => {
+    const id = parseFloat(row.dataset.id);
+    const trade = trades.find(t => t.id === id);
+    if (!trade) return;
+    row.querySelectorAll('[data-field]').forEach(cell => {
+      const field = cell.dataset.field;
+      let val = cell.innerText.trim();
+      if (['strike','premium','buyback','commissions'].includes(field)) {
+        val = parseFloat(val) || 0;
+      } else if (field === 'qty') {
+        val = parseInt(val) || 1;
+      }
+      trade[field] = val;
+    });
+    const gross = (trade.premium - (trade.buyback || 0)) * 100 * trade.qty;
+    trade.net = gross - trade.commissions;
+  });
+  saveTrades();
 }
 
 function updateSummary() {

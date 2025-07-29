@@ -95,6 +95,14 @@ button {
   transition: background 0.3s, transform 0.2s;
 }
 button:hover { background: #1de9d0; transform: translateY(-2px); }
+.icon-btn {
+  background: none;
+  color: inherit;
+  box-shadow: none;
+  padding: 0 0.25rem;
+  margin-left: 0.5rem;
+}
+.icon-btn:hover { background: none; transform: none; }
 .table-container {
   max-height: 300px;
   overflow-y: auto;
