@@ -9,6 +9,7 @@ let lineChart;
 let barChart;
 
 loadTrades();
+ensurePresetTrade();
 updateTable();
 updateSummary();
 drawCharts();
@@ -17,7 +18,6 @@ form.addEventListener('submit', e => {
   e.preventDefault();
   const trade = {
     ticker: document.getElementById('ticker').value,
-    strategy: document.getElementById('strategy').value,
     openDate: document.getElementById('openDate').value,
     closeDate: document.getElementById('closeDate').value,
     strike: parseFloat(document.getElementById('strike').value),
@@ -53,7 +53,6 @@ function updateTable() {
     tr.className = t.net >= 0 ? 'profit' : 'loss';
     tr.innerHTML = `
       <td>${t.ticker}</td>
-      <td>${t.strategy}</td>
       <td>${t.openDate}</td>
       <td>${t.closeDate}</td>
       <td>$${t.strike.toFixed(2)}</td>
@@ -191,6 +190,7 @@ function loadTrades() {
     const saved = JSON.parse(data);
     if (Array.isArray(saved)) {
       saved.forEach(t => {
+        delete t.strategy;
         t.strike = parseFloat(t.strike);
         t.premium = parseFloat(t.premium);
         t.buyback = parseFloat(t.buyback) || 0;
@@ -210,4 +210,38 @@ function setDefaultFormValues() {
   document.getElementById('buyback').value = '0.01';
   document.getElementById('quantity').value = '1';
   document.getElementById('commissions').value = '0';
+}
+
+function ensurePresetTrade() {
+  if (trades.length) return;
+  const {monday, friday} = getLastWeekDates();
+  addTrade({
+    ticker: 'GME',
+    openDate: formatDate(monday),
+    closeDate: formatDate(friday),
+    strike: 25,
+    premium: 0.1,
+    buyback: 0.01,
+    qty: 10,
+    commissions: 10
+  });
+}
+
+function getLastWeekDates() {
+  const today = new Date();
+  const day = today.getDay();
+  const mondayThisWeek = new Date(today);
+  mondayThisWeek.setDate(today.getDate() - ((day + 6) % 7));
+  const mondayLastWeek = new Date(mondayThisWeek);
+  mondayLastWeek.setDate(mondayThisWeek.getDate() - 7);
+  const fridayLastWeek = new Date(mondayLastWeek);
+  fridayLastWeek.setDate(mondayLastWeek.getDate() + 4);
+  return {monday: mondayLastWeek, friday: fridayLastWeek};
+}
+
+function formatDate(d) {
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 }
