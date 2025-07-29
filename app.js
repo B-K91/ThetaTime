@@ -7,6 +7,28 @@ const csvInput = document.getElementById('csvFile');
 const lineCanvas = document.getElementById('profit-line');
 const barCanvas = document.getElementById('monthly-bar');
 
+function loadTrades() {
+  const saved = localStorage.getItem('trades');
+  if (!saved) return;
+  try {
+    const data = JSON.parse(saved);
+    if (Array.isArray(data)) {
+      trades.push(...data);
+    }
+  } catch (e) {
+    console.error('Failed to load trades', e);
+  }
+}
+
+function saveTrades() {
+  localStorage.setItem('trades', JSON.stringify(trades));
+}
+
+loadTrades();
+updateTable();
+updateSummary();
+drawCharts();
+
 form.addEventListener('submit', e => {
   e.preventDefault();
   const trade = {
@@ -52,6 +74,7 @@ function addTrade(t) {
   t.id = Date.now() + Math.random();
   t.net = (t.premium - (t.buyback || 0) - (t.commissions || 0)) * (t.qty || 1);
   trades.push(t);
+  saveTrades();
   updateTable();
   updateSummary();
   drawCharts();
@@ -85,6 +108,7 @@ function deleteTrade(id) {
   const idx = trades.findIndex(tr => tr.id === id);
   if (idx !== -1) {
     trades.splice(idx, 1);
+    saveTrades();
     updateTable();
     updateSummary();
     drawCharts();
