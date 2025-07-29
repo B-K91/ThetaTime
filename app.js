@@ -5,6 +5,8 @@ const summaryEl = document.getElementById('summary');
 const monthlySummaryEl = document.getElementById('monthly-summary');
 const lineCanvas = document.getElementById('profit-line');
 const barCanvas = document.getElementById('monthly-bar');
+let lineChart;
+let barChart;
 
 loadTrades();
 updateTable();
@@ -114,57 +116,67 @@ function drawCharts() {
 }
 
 function drawLineChart() {
-  const ctx = lineCanvas.getContext('2d');
-  ctx.clearRect(0,0,lineCanvas.width,lineCanvas.height);
-  if(!trades.length) return;
-  const points = [];
+  if (lineChart) lineChart.destroy();
+  if (!trades.length) return;
   let cum = 0;
-  for (const t of trades) {
-    cum += t.net;
-    points.push({date:new Date(t.closeDate), value:cum});
-  }
-  const minDate = points[0].date;
-  const maxDate = points[points.length-1].date;
-  const minY = Math.min(0, ...points.map(p=>p.value));
-  const maxY = Math.max(...points.map(p=>p.value));
-  const pad = 40;
-  const w = lineCanvas.width - pad*2;
-  const h = lineCanvas.height - pad*2;
-  const rangeX = (maxDate - minDate) || 1;
-  const rangeY = (maxY - minY) || 1;
-  ctx.strokeStyle = '#00c853';
-  ctx.beginPath();
-  points.forEach((p,i)=>{
-    const x = pad + (p.date-minDate)/rangeX*w;
-    const y = pad + h - (p.value-minY)/rangeY*h;
-    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  const labels = [];
+  const data = trades
+    .slice()
+    .sort((a, b) => new Date(a.closeDate) - new Date(b.closeDate))
+    .map(t => {
+      cum += t.net;
+      labels.push(t.closeDate);
+      return cum;
+    });
+
+  lineChart = new Chart(lineCanvas, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        data,
+        borderColor: '#00c853',
+        tension: 0.3,
+        fill: false
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        x: { display: true },
+        y: { display: true }
+      }
+    }
   });
-  ctx.stroke();
 }
 
 function drawBarChart() {
-  const ctx = barCanvas.getContext('2d');
-  ctx.clearRect(0,0,barCanvas.width,barCanvas.height);
-  if(!trades.length) return;
+  if (barChart) barChart.destroy();
+  if (!trades.length) return;
   const monthly = {};
-  for(const t of trades){
-    const m = t.closeDate.slice(0,7);
-    monthly[m] = (monthly[m]||0)+t.net;
+  for (const t of trades) {
+    const m = t.closeDate.slice(0, 7);
+    monthly[m] = (monthly[m] || 0) + t.net;
   }
-  const entries = Object.entries(monthly).sort();
-  const pad = 40;
-  const w = barCanvas.width - pad*2;
-  const h = barCanvas.height - pad*2;
-  const maxVal = Math.max(...entries.map(e=>Math.abs(e[1])), 1);
-  const barWidth = w/entries.length*0.6;
-  entries.forEach(([m,v],i)=>{
-    const x = pad + i*(w/entries.length) + barWidth*0.2;
-    const barHeight = (Math.abs(v)/maxVal)*h;
-    const y = pad + h - barHeight;
-    ctx.fillStyle = v>=0? 'rgba(0,200,83,0.7)' : 'rgba(239,68,68,0.7)';
-    ctx.fillRect(x,y,barWidth,barHeight);
-    ctx.fillStyle = '#fff';
-    ctx.fillText(m, x, h + pad + 10);
+  const labels = Object.keys(monthly).sort();
+  const data = labels.map(m => monthly[m]);
+
+  barChart = new Chart(barCanvas, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        data,
+        backgroundColor: data.map(v => v >= 0 ? 'rgba(0,200,83,0.7)' : 'rgba(239,68,68,0.7)')
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        x: { display: true },
+        y: { display: true }
+      }
+    }
   });
 }
 
