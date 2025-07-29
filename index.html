@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ThetaTime Dashboard</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>ThetaTime Options Tracker</h1>
+    </header>
+
+    <section id="summary" class="summary-cards"></section>
+
+    <section class="input-section">
+      <h2>Add Trade</h2>
+      <form id="trade-form">
+        <div class="form-grid">
+          <input type="text" id="ticker" placeholder="Ticker" required>
+          <input type="text" id="strategy" placeholder="Strategy" required>
+          <input type="date" id="openDate" required>
+          <input type="date" id="closeDate" required>
+          <input type="number" step="0.01" id="strike" placeholder="Strike" required>
+          <input type="number" step="0.01" id="premium" placeholder="Premium" required>
+          <input type="number" step="0.01" id="buyback" placeholder="Buyback" value="0">
+          <input type="number" step="1" id="quantity" placeholder="Qty" value="1">
+          <input type="number" step="0.01" id="commissions" placeholder="Commissions" value="0">
+        </div>
+        <button type="submit">Add Trade</button>
+      </form>
+      <div class="csv-input">
+        <label>Import CSV
+          <input type="file" id="csvFile" accept=".csv">
+        </label>
+      </div>
+    </section>
+
+    <section class="table-section">
+      <h2>Trades</h2>
+      <div class="table-container">
+        <table id="trade-table">
+          <thead>
+            <tr>
+              <th>Ticker</th>
+              <th>Strategy</th>
+              <th>Open</th>
+              <th>Close</th>
+              <th>Strike</th>
+              <th>Premium</th>
+              <th>Buyback</th>
+              <th>Qty</th>
+              <th>Commissions</th>
+              <th>Net</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="graphs">
+      <h2>Performance</h2>
+      <canvas id="profit-line" width="600" height="300"></canvas>
+      <canvas id="monthly-bar" width="600" height="300"></canvas>
+    </section>
+
+    <footer id="monthly-summary"></footer>
+  </div>
+<script src="app.js"></script>
+</body>
+</html>
