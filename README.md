@@ -15,4 +15,4 @@ Open `index.html` in a browser. No build step or dependencies are required.
 - Line chart of cumulative profit
 - Bar chart of monthly P&L
 
-All styling and behavior are implemented with plain CSS and JavaScript (no external libraries required).
+All styling and behavior are implemented with plain CSS and JavaScript (no external libraries required). The default theme takes inspiration from the Robinhood trading platform.
