@@ -3,7 +3,6 @@ const form = document.getElementById('trade-form');
 const tableBody = document.querySelector('#trade-table tbody');
 const summaryEl = document.getElementById('summary');
 const monthlySummaryEl = document.getElementById('monthly-summary');
-const csvInput = document.getElementById('csvFile');
 const lineCanvas = document.getElementById('profit-line');
 const barCanvas = document.getElementById('monthly-bar');
 
@@ -30,29 +29,6 @@ form.addEventListener('submit', e => {
   setDefaultFormValues();
 });
 
-csvInput.addEventListener('change', () => {
-  const file = csvInput.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => parseCSV(e.target.result);
-  reader.readAsText(file);
-  csvInput.value = '';
-});
-
-function parseCSV(text) {
-  const lines = text.trim().split(/\r?\n/);
-  for (let line of lines.slice(1)) {
-    const [ticker, strategy, openDate, closeDate, strike, premium, buyback, qty, commissions] = line.split(',');
-    addTrade({
-      ticker, strategy, openDate, closeDate,
-      strike: parseFloat(strike),
-      premium: parseFloat(premium),
-      buyback: parseFloat(buyback) || 0,
-      qty: parseInt(qty) || 1,
-      commissions: parseFloat(commissions) || 0
-    });
-  }
-}
 
 function addTrade(t) {
   t.id = Date.now() + Math.random();
