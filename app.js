@@ -13,7 +13,16 @@ function loadTrades() {
   try {
     const data = JSON.parse(saved);
     if (Array.isArray(data)) {
-      trades.push(...data);
+      for (const t of data) {
+        t.strike = parseFloat(t.strike);
+        t.premium = parseFloat(t.premium);
+        t.buyback = parseFloat(t.buyback) || 0;
+        t.qty = parseInt(t.qty) || 1;
+        t.commissions = parseFloat(t.commissions) || 0;
+        if (!t.id) t.id = Date.now() + Math.random();
+        t.net = (t.premium - t.buyback - t.commissions) * t.qty;
+        trades.push(t);
+      }
     }
   } catch (e) {
     console.error('Failed to load trades', e);
