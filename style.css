@@ -68,6 +68,16 @@ header h1 {
   gap: 0.5rem;
 }
 
+.form-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-field label {
+  font-size: 0.75rem;
+  margin-bottom: 0.2rem;
+}
+
 input[type="text"],
 input[type="number"],
 input[type="date"],

@@ -36,7 +36,6 @@ form.addEventListener('submit', e => {
   e.preventDefault();
   const trade = {
     ticker: document.getElementById('ticker').value,
-    openDate: document.getElementById('openDate').value,
     closeDate: document.getElementById('closeDate').value,
     strike: parseFloat(document.getElementById('strike').value),
     premium: parseFloat(document.getElementById('premium').value),
@@ -73,7 +72,6 @@ function updateTable() {
     if (isEditing) {
       tr.innerHTML = `
         <td contenteditable data-field="ticker">${t.ticker}</td>
-        <td contenteditable data-field="openDate">${t.openDate}</td>
         <td contenteditable data-field="closeDate">${t.closeDate}</td>
         <td contenteditable data-field="strike">${t.strike.toFixed(2)}</td>
         <td contenteditable data-field="premium">${t.premium.toFixed(2)}</td>
@@ -87,7 +85,6 @@ function updateTable() {
     } else {
       tr.innerHTML = `
         <td>${t.ticker}</td>
-        <td>${t.openDate}</td>
         <td>${t.closeDate}</td>
         <td>$${t.strike.toFixed(2)}</td>
         <td>${t.premium.toFixed(2)}</td>
@@ -263,10 +260,8 @@ function loadTrades() {
 }
 
 function setDefaultFormValues() {
-  const {monday, friday} = getLastWeekDates();
   document.getElementById('ticker').value = 'GME';
-  document.getElementById('openDate').value = formatDate(monday);
-  document.getElementById('closeDate').value = formatDate(friday);
+  document.getElementById('closeDate').value = formatDate(new Date());
   document.getElementById('strike').value = '25';
   document.getElementById('premium').value = '0.10';
   document.getElementById('buyback').value = '0.01';
@@ -276,29 +271,16 @@ function setDefaultFormValues() {
 
 function ensurePresetTrade() {
   if (trades.length) return;
-  const {monday, friday} = getLastWeekDates();
+  const today = new Date();
   addTrade({
     ticker: 'GME',
-    openDate: formatDate(monday),
-    closeDate: formatDate(friday),
+    closeDate: formatDate(today),
     strike: 25,
     premium: 0.1,
     buyback: 0.01,
     qty: 10,
     commissions: 10
   });
-}
-
-function getLastWeekDates() {
-  const today = new Date();
-  const day = today.getDay();
-  const mondayThisWeek = new Date(today);
-  mondayThisWeek.setDate(today.getDate() - ((day + 6) % 7));
-  const mondayLastWeek = new Date(mondayThisWeek);
-  mondayLastWeek.setDate(mondayThisWeek.getDate() - 7);
-  const fridayLastWeek = new Date(mondayLastWeek);
-  fridayLastWeek.setDate(mondayLastWeek.getDate() + 4);
-  return {monday: mondayLastWeek, friday: fridayLastWeek};
 }
 
 function formatDate(d) {
