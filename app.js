@@ -6,6 +6,12 @@ const monthlySummaryEl = document.getElementById('monthly-summary');
 const csvInput = document.getElementById('csvFile');
 const lineCanvas = document.getElementById('profit-line');
 const barCanvas = document.getElementById('monthly-bar');
+
+loadTrades();
+updateTable();
+updateSummary();
+drawCharts();
+setDefaultFormValues();
 form.addEventListener('submit', e => {
   e.preventDefault();
   const trade = {
@@ -63,7 +69,7 @@ function addTrade(t) {
 
 function updateTable() {
   tableBody.innerHTML = '';
-  trades.sort((a,b) => new Date(a.closeDate) - new Date(b.closeDate));
+  trades.sort((a,b) => new Date(b.closeDate) - new Date(a.closeDate));
   for (const t of trades) {
     const tr = document.createElement('tr');
     tr.className = t.net >= 0 ? 'profit' : 'loss';
@@ -184,4 +190,36 @@ function drawBarChart() {
     ctx.fillStyle = '#fff';
     ctx.fillText(m, x, h + pad + 10);
   });
+}
+
+function saveTrades() {
+  localStorage.setItem('trades', JSON.stringify(trades));
+}
+
+function loadTrades() {
+  const data = localStorage.getItem('trades');
+  if (!data) return;
+  try {
+    const saved = JSON.parse(data);
+    if (Array.isArray(saved)) {
+      saved.forEach(t => {
+        t.strike = parseFloat(t.strike);
+        t.premium = parseFloat(t.premium);
+        t.buyback = parseFloat(t.buyback) || 0;
+        t.qty = parseInt(t.qty) || 1;
+        t.commissions = parseFloat(t.commissions) || 0;
+        const gross = (t.premium - (t.buyback || 0)) * 100 * t.qty;
+        t.net = gross - t.commissions;
+        trades.push(t);
+      });
+    }
+  } catch(err) {
+    console.error('Failed to load trades', err);
+  }
+}
+
+function setDefaultFormValues() {
+  document.getElementById('buyback').value = '0.01';
+  document.getElementById('quantity').value = '1';
+  document.getElementById('commissions').value = '0';
 }
