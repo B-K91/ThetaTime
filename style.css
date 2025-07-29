@@ -67,6 +67,10 @@ header h1 {
   grid-template-columns: repeat(auto-fit, minmax(140px,1fr));
   gap: 0.5rem;
 }
+.form-field {
+  display: flex;
+  flex-direction: column;
+}
 
 input[type="text"],
 input[type="number"],
@@ -162,4 +166,13 @@ footer {
   margin-top: 1rem;
   text-align: center;
   opacity: 0.8;
+}
+
+@media (max-width: 600px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  .table-container {
+    overflow-x: auto;
+  }
 }
