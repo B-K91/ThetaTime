@@ -22,14 +22,14 @@
       <h2>Add Trade</h2>
       <form id="trade-form">
         <div class="form-grid">
-          <input type="text" id="ticker" placeholder="Ticker" required>
+          <input type="text" id="ticker" placeholder="Ticker" value="GME" required>
           <input type="date" id="openDate" required>
           <input type="date" id="closeDate" required>
-          <input type="number" step="0.01" id="strike" placeholder="Strike ($)" required>
-          <input type="number" step="0.01" id="premium" placeholder="Premium" required>
+          <input type="number" step="0.01" id="strike" placeholder="Strike ($)" value="25" required>
+          <input type="number" step="0.01" id="premium" placeholder="Premium" value="0.10" required>
           <input type="number" step="0.01" id="buyback" placeholder="Buyback" value="0.01">
-          <input type="number" step="1" id="quantity" placeholder="Qty" value="1">
-          <input type="number" step="0.01" id="commissions" placeholder="Fees ($)" value="0">
+          <input type="number" step="1" id="quantity" placeholder="Qty" value="10">
+          <input type="number" step="0.01" id="commissions" placeholder="Fees ($)" value="10">
         </div>
         <button type="submit">Add Trade</button>
       </form>
