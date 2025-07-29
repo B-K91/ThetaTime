@@ -76,8 +76,6 @@ button:hover { background: #02b14f; }
 #trade-table td:first-child, #trade-table th:first-child {
   text-align: left;
 }
-tr.profit { background: rgba(0,200,83,0.15); }
-tr.loss { background: rgba(239,68,68,0.15); }
 .graphs {
   background: rgba(255,255,255,0.05);
   backdrop-filter: blur(6px);

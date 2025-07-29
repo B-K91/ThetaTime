@@ -49,6 +49,7 @@ function parseCSV(text) {
 }
 
 function addTrade(t) {
+  t.id = Date.now() + Math.random();
   t.net = (t.premium - (t.buyback || 0) - (t.commissions || 0)) * (t.qty || 1);
   trades.push(t);
   updateTable();
@@ -73,8 +74,20 @@ function updateTable() {
       <td>${t.qty}</td>
       <td>${t.commissions.toFixed(2)}</td>
       <td>${t.net.toFixed(2)}</td>
+      <td><button class="delete-btn" data-id="${t.id}" title="Delete">&times;</button></td>
     `;
+    tr.querySelector('.delete-btn').addEventListener('click', () => deleteTrade(t.id));
     tableBody.appendChild(tr);
+  }
+}
+
+function deleteTrade(id) {
+  const idx = trades.findIndex(tr => tr.id === id);
+  if (idx !== -1) {
+    trades.splice(idx, 1);
+    updateTable();
+    updateSummary();
+    drawCharts();
   }
 }
 
