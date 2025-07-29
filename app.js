@@ -49,6 +49,7 @@ function parseCSV(text) {
 }
 
 function addTrade(t) {
+  t.id = Date.now() + Math.random();
   t.net = (t.premium - (t.buyback || 0) - (t.commissions || 0)) * (t.qty || 1);
   trades.push(t);
   updateTable();
@@ -73,8 +74,20 @@ function updateTable() {
       <td>${t.qty}</td>
       <td>${t.commissions.toFixed(2)}</td>
       <td>${t.net.toFixed(2)}</td>
+      <td><button class="delete-btn" data-id="${t.id}" title="Delete">&times;</button></td>
     `;
+    tr.querySelector('.delete-btn').addEventListener('click', () => deleteTrade(t.id));
     tableBody.appendChild(tr);
+  }
+}
+
+function deleteTrade(id) {
+  const idx = trades.findIndex(tr => tr.id === id);
+  if (idx !== -1) {
+    trades.splice(idx, 1);
+    updateTable();
+    updateSummary();
+    drawCharts();
   }
 }
 
@@ -130,7 +143,7 @@ function drawLineChart() {
   const pad = 40;
   const w = lineCanvas.width - pad*2;
   const h = lineCanvas.height - pad*2;
-  ctx.strokeStyle = '#fff';
+  ctx.strokeStyle = '#00c853';
   ctx.beginPath();
   points.forEach((p,i)=>{
     const x = pad + (p.date-minDate)/(maxDate-minDate)*w;
@@ -158,7 +171,7 @@ function drawBarChart() {
   entries.forEach(([m,v],i)=>{
     const x = pad + i*(w/entries.length) + barWidth*0.2;
     const y = pad + h - (v/maxVal)*h;
-    ctx.fillStyle = v>=0? 'rgba(16,185,129,0.7)' : 'rgba(239,68,68,0.7)';
+    ctx.fillStyle = v>=0? 'rgba(0,200,83,0.7)' : 'rgba(239,68,68,0.7)';
     ctx.fillRect(x,y,barWidth,(v/maxVal)*h);
     ctx.fillStyle = '#fff';
     ctx.fillText(m, x, h + pad + 10);
