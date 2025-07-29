@@ -53,6 +53,7 @@ form.addEventListener('submit', e => {
   };
   addTrade(trade);
   form.reset();
+  setDefaultFormValues();
 });
 
 csvInput.addEventListener('change', () => {
