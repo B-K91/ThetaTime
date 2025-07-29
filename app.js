@@ -141,6 +141,16 @@ function drawLineChart() {
     },
     options: {
       responsive: true,
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: ctx => '$' + ctx.parsed.y.toFixed(2)
+          }
+        },
+        legend: {
+          display: false
+        }
+      },
       scales: {
         x: { display: true },
         y: { display: true }
@@ -171,6 +181,16 @@ function drawBarChart() {
     },
     options: {
       responsive: true,
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: ctx => '$' + ctx.parsed.y.toFixed(2)
+          }
+        },
+        legend: {
+          display: false
+        }
+      },
       scales: {
         x: { display: true },
         y: { display: true }
