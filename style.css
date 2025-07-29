@@ -77,6 +77,14 @@ button:hover { background: #2563eb; }
 }
 tr.profit { background: rgba(16,185,129,0.2); }
 tr.loss { background: rgba(239,68,68,0.2); }
+.delete-btn {
+  background: none;
+  border: none;
+  color: #ef4444;
+  cursor: pointer;
+  font-weight: bold;
+}
+.delete-btn:hover { color: #b91c1c; }
 .graphs {
   background: rgba(255,255,255,0.1);
   backdrop-filter: blur(6px);
