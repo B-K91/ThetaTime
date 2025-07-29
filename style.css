@@ -1,11 +1,21 @@
+:root {
+  --bg-color: #0f1115;
+  --bg-gradient: linear-gradient(135deg, #0f1115, #13171c);
+  --text-color: #f0f6f0;
+  --accent: #00c853;
+  --card-bg: rgba(255, 255, 255, 0.06);
+}
+
 * {
   box-sizing: border-box;
 }
+
 body {
   margin: 0;
   font-family: 'Inter', sans-serif;
-  background: linear-gradient(135deg, #0f1115, #13171c);
-  color: #f0f6f0;
+  line-height: 1.5;
+  background: var(--bg-gradient);
+  color: var(--text-color);
 }
 .container {
   max-width: 1200px;
@@ -16,7 +26,14 @@ header h1 {
   text-align: center;
   margin-bottom: 1rem;
   font-size: 2rem;
-  color: #00c853;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.app-title {
+  background: linear-gradient(45deg, var(--accent), #00e676);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 .summary-cards {
   display: grid;
@@ -25,14 +42,15 @@ header h1 {
   margin-bottom: 1rem;
 }
 .summary-card {
-  background: rgba(255,255,255,0.05);
+  background: var(--card-bg);
   backdrop-filter: blur(6px);
   padding: 1rem;
   border-radius: 8px;
   text-align: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
 }
 .input-section {
-  background: rgba(255,255,255,0.05);
+  background: var(--card-bg);
   backdrop-filter: blur(6px);
   padding: 1rem;
   border-radius: 8px;
@@ -43,12 +61,27 @@ header h1 {
   grid-template-columns: repeat(auto-fit, minmax(140px,1fr));
   gap: 0.5rem;
 }
+
+input[type="text"],
+input[type="number"],
+input[type="date"],
+input[type="file"] {
+  padding: 0.4rem 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  color: inherit;
+}
+
+input::placeholder {
+  color: #ccc;
+}
 button {
   margin-top: 0.5rem;
   padding: 0.5rem 1rem;
   border: none;
   border-radius: 4px;
-  background: #00c853;
+  background: var(--accent);
   color: #fff;
   cursor: pointer;
   transition: background 0.3s;
@@ -58,6 +91,9 @@ button:hover { background: #02b14f; }
 .table-container {
   max-height: 300px;
   overflow-y: auto;
+  background: var(--card-bg);
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
 }
 #trade-table {
   width: 100%;
@@ -73,17 +109,24 @@ button:hover { background: #02b14f; }
   padding: 0.5rem;
   text-align: right;
 }
+#trade-table tr:nth-child(even) {
+  background: rgba(255,255,255,0.04);
+}
+#trade-table tr.profit td:last-child { color: #00e676; }
+#trade-table tr.loss td:last-child { color: var(--danger, #ef5350); }
 #trade-table td:first-child, #trade-table th:first-child {
   text-align: left;
 }
 .graphs {
-  background: rgba(255,255,255,0.05);
+  background: var(--card-bg);
   backdrop-filter: blur(6px);
   padding: 1rem;
   border-radius: 8px;
   margin-top: 1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
 }
 footer {
   margin-top: 1rem;
   text-align: center;
+  opacity: 0.8;
 }

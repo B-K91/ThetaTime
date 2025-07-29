@@ -6,38 +6,6 @@ const monthlySummaryEl = document.getElementById('monthly-summary');
 const csvInput = document.getElementById('csvFile');
 const lineCanvas = document.getElementById('profit-line');
 const barCanvas = document.getElementById('monthly-bar');
-
-function loadTrades() {
-  const saved = localStorage.getItem('trades');
-  if (!saved) return;
-  try {
-    const data = JSON.parse(saved);
-    if (Array.isArray(data)) {
-      for (const t of data) {
-        t.strike = parseFloat(t.strike);
-        t.premium = parseFloat(t.premium);
-        t.buyback = parseFloat(t.buyback) || 0;
-        t.qty = parseInt(t.qty) || 1;
-        t.commissions = parseFloat(t.commissions) || 0;
-        if (!t.id) t.id = Date.now() + Math.random();
-        t.net = (t.premium - t.buyback - t.commissions) * t.qty;
-        trades.push(t);
-      }
-    }
-  } catch (e) {
-    console.error('Failed to load trades', e);
-  }
-}
-
-function saveTrades() {
-  localStorage.setItem('trades', JSON.stringify(trades));
-}
-
-loadTrades();
-updateTable();
-updateSummary();
-drawCharts();
-
 form.addEventListener('submit', e => {
   e.preventDefault();
   const trade = {
@@ -53,6 +21,7 @@ form.addEventListener('submit', e => {
   };
   addTrade(trade);
   form.reset();
+  setDefaultFormValues();
 });
 
 csvInput.addEventListener('change', () => {
@@ -81,7 +50,8 @@ function parseCSV(text) {
 
 function addTrade(t) {
   t.id = Date.now() + Math.random();
-  t.net = (t.premium - (t.buyback || 0) - (t.commissions || 0)) * (t.qty || 1);
+  const perContract = (t.premium - (t.buyback || 0)) * 100 - (t.commissions || 0);
+  t.net = perContract * (t.qty || 1);
   trades.push(t);
   saveTrades();
   updateTable();
@@ -100,12 +70,12 @@ function updateTable() {
       <td>${t.strategy}</td>
       <td>${t.openDate}</td>
       <td>${t.closeDate}</td>
-      <td>${t.strike.toFixed(2)}</td>
+      <td>$${t.strike.toFixed(2)}</td>
       <td>${t.premium.toFixed(2)}</td>
       <td>${t.buyback.toFixed(2)}</td>
       <td>${t.qty}</td>
-      <td>${t.commissions.toFixed(2)}</td>
-      <td>${t.net.toFixed(2)}</td>
+      <td>$${t.commissions.toFixed(2)}</td>
+      <td>$${t.net.toFixed(2)}</td>
       <td><button class="delete-btn" data-id="${t.id}" title="Delete">&times;</button></td>
     `;
     tr.querySelector('.delete-btn').addEventListener('click', () => deleteTrade(t.id));
@@ -137,7 +107,7 @@ function updateSummary() {
   const wins = trades.filter(t => t.net > 0).length;
   const winRate = wins / trades.length * 100;
   const cards = [
-    {label:'Total Profit', value: totalProfit.toFixed(2)},
+    {label:'Total Profit', value: '$' + totalProfit.toFixed(2)},
     {label:'Avg Premium', value: avgPremium.toFixed(2)},
     {label:'Trades', value: trades.length},
     {label:'Avg Duration', value: avgDuration.toFixed(1) + 'd'},
@@ -150,7 +120,7 @@ function updateSummary() {
     const m = t.closeDate.slice(0,7); // YYYY-MM
     monthly[m] = (monthly[m] || 0) + t.net;
   }
-  const rows = Object.entries(monthly).sort().map(([m,v])=>`<div>${m}: ${v.toFixed(2)}</div>`).join('');
+  const rows = Object.entries(monthly).sort().map(([m,v])=>`<div>${m}: $${v.toFixed(2)}</div>`).join('');
   monthlySummaryEl.innerHTML = rows;
 }
 

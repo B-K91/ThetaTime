@@ -1,6 +1,6 @@
 # ThetaTime Dashboard
 
-A simple single-page web app for tracking closed options trades. Add trades manually or import from a CSV file and view summary statistics and charts.
+A simple single-page web app for tracking closed options trades. Add trades manually or import from a CSV file and view summary statistics and charts. The interface now features a modern dark theme with responsive cards and tables.
 
 ## Usage
 
@@ -14,5 +14,3 @@ Open `index.html` in a browser. No build step or dependencies are required.
 - Summary cards for total profit, average premium, trade count, average duration, win rate
 - Line chart of cumulative profit
 - Bar chart of monthly P&L
-
-All styling and behavior are implemented with plain CSS and JavaScript (no external libraries required). The default theme takes inspiration from the Robinhood trading platform.
