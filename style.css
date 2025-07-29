@@ -95,7 +95,6 @@ button {
   transition: background 0.3s, transform 0.2s;
 }
 button:hover { background: #1de9d0; transform: translateY(-2px); }
-.csv-input { margin-top: 1rem; }
 .table-container {
   max-height: 300px;
   overflow-y: auto;
