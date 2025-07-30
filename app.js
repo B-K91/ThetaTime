@@ -81,7 +81,7 @@ function updateTable() {
         <td contenteditable data-field="qty">${t.qty}</td>
         <td contenteditable data-field="commissions">${t.commissions.toFixed(2)}</td>
         <td class="net">$${t.net.toFixed(2)}</td>
-        <td>${t.percent.toFixed(1)}%</td>
+        <td>${t.percent.toFixed(2)}%</td>
         <td><button class="delete-btn" data-id="${t.id}" title="Delete">&times;</button></td>
       `;
       tr.querySelector('.delete-btn').addEventListener('click', () => deleteTrade(t.id));
@@ -95,7 +95,7 @@ function updateTable() {
         <td>${t.qty}</td>
         <td>$${t.commissions.toFixed(2)}</td>
         <td class="net">$${t.net.toFixed(2)}</td>
-        <td>${t.percent.toFixed(1)}%</td>
+        <td>${t.percent.toFixed(2)}%</td>
         <td></td>
       `;
     }
