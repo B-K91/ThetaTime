@@ -170,16 +170,15 @@ canvas {
   background: rgba(239, 68, 68, 0.1);
 }
 
-#trade-table tr.profit td:last-child,
-#trade-table tr.loss td:last-child {
+#trade-table td.net {
   font-weight: 600;
 }
 
-#trade-table tr.profit td:last-child {
+#trade-table tr.profit td.net {
   color: var(--accent);
 }
 
-#trade-table tr.loss td:last-child {
+#trade-table tr.loss td.net {
   color: #ef4444;
 }
 footer {
