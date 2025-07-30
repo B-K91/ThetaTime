@@ -181,23 +181,43 @@ function drawLineChart() {
     const m = t.closeDate.slice(0, 7);
     if (monthly[m] !== undefined) monthly[m] += t.net;
   }
+  const currentIdx = new Date().getMonth();
   let cum = 0;
-  const data = months.map(m => {
+  const data = months.map((m, i) => {
     cum += monthly[m];
-    return cum;
+    return i <= currentIdx ? cum : null;
   });
+
+  const step = 8000 / 11;
+  const projection = months.map((_, i) => step * i);
+
+  const lastActual = data[currentIdx] ?? 0;
+  const lastProjection = projection[currentIdx];
+  const lineColor = lastActual >= lastProjection ? '#4caf50' : '#f44336';
+
   const labels = months.map(formatMonthYear);
 
   lineChart = new Chart(lineCanvas, {
     type: 'line',
     data: {
       labels,
-      datasets: [{
-        data,
-        borderColor: '#2196f3',
-        tension: 0.3,
-        fill: false
-      }]
+      datasets: [
+        {
+          label: 'Actual',
+          data,
+          borderColor: lineColor,
+          tension: 0.3,
+          fill: false
+        },
+        {
+          label: 'Projection',
+          data: projection,
+          borderColor: '#888',
+          borderDash: [5, 5],
+          tension: 0.3,
+          fill: false
+        }
+      ]
     },
     options: {
       responsive: true,
