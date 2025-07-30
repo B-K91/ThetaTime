@@ -154,14 +154,15 @@ function updateSummary() {
   ];
   summaryEl.innerHTML = cards.map(c => `<div class="summary-card"><h3>${c.label}</h3><p>${c.value}</p></div>`).join('');
 
+  const months = getCurrentYearMonths();
   const monthly = {};
+  months.forEach(m => (monthly[m] = 0));
   for (const t of trades) {
-    const m = t.closeDate.slice(0,7); // YYYY-MM
-    monthly[m] = (monthly[m] || 0) + t.net;
+    const m = t.closeDate.slice(0, 7);
+    if (monthly[m] !== undefined) monthly[m] += t.net;
   }
-  const rows = Object.entries(monthly)
-    .sort()
-    .map(([m,v]) => `<div>${formatMonthYear(m)}: $${v.toFixed(2)}</div>`)
+  const rows = months
+    .map(m => `<div>${formatMonthYear(m)}: $${monthly[m].toFixed(2)}</div>`)
     .join('');
   monthlySummaryEl.innerHTML = rows;
 }
@@ -173,17 +174,19 @@ function drawCharts() {
 
 function drawLineChart() {
   if (lineChart) lineChart.destroy();
-  if (!trades.length) return;
+  const months = getCurrentYearMonths();
+  const monthly = {};
+  months.forEach(m => (monthly[m] = 0));
+  for (const t of trades) {
+    const m = t.closeDate.slice(0, 7);
+    if (monthly[m] !== undefined) monthly[m] += t.net;
+  }
   let cum = 0;
-  const labels = [];
-  const data = trades
-    .slice()
-    .sort((a, b) => new Date(a.closeDate) - new Date(b.closeDate))
-    .map(t => {
-      cum += t.net;
-      labels.push(t.closeDate);
-      return cum;
-    });
+  const data = months.map(m => {
+    cum += monthly[m];
+    return cum;
+  });
+  const labels = months.map(formatMonthYear);
 
   lineChart = new Chart(lineCanvas, {
     type: 'line',
@@ -209,15 +212,16 @@ function drawLineChart() {
 
 function drawBarChart() {
   if (barChart) barChart.destroy();
-  if (!trades.length) return;
+  const months = getCurrentYearMonths();
   const monthly = {};
+  months.forEach(m => (monthly[m] = 0));
   for (const t of trades) {
     const m = t.closeDate.slice(0, 7);
-    monthly[m] = (monthly[m] || 0) + t.net;
+    if (monthly[m] !== undefined) monthly[m] += t.net;
   }
-  const labels = Object.keys(monthly).sort();
-  const data = labels.map(m => monthly[m]);
-
+  const labels = months;
+  const data = months.map(m => monthly[m]);
+  
   barChart = new Chart(barCanvas, {
     type: 'bar',
     data: {
@@ -298,8 +302,17 @@ function formatDate(d) {
   return `${year}-${month}-${day}`;
 }
 
+function getCurrentYearMonths() {
+  const year = new Date().getFullYear();
+  const months = [];
+  for (let i = 0; i < 12; i++) {
+    months.push(`${year}-${String(i + 1).padStart(2, '0')}`);
+  }
+  return months;
+}
+
 function formatMonthYear(key) {
   const [y, m] = key.split('-');
   const date = new Date(y, parseInt(m) - 1);
-  return date.toLocaleString('default', { month: 'long', year: 'numeric' });
+  return date.toLocaleString('en', { month: 'short' });
 }
