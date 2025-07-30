@@ -114,8 +114,6 @@ button:hover { background: #1de9d0; transform: translateY(-2px); }
 }
 .icon-btn:hover { background: none; transform: none; }
 .table-container {
-  max-height: 640px;
-  overflow-y: auto;
   background: var(--card-bg);
   border-radius: 8px;
   box-shadow: var(--shadow-lg);
