@@ -145,8 +145,8 @@ function updateSummary() {
     return;
   }
   const totalProfit = trades.reduce((s, t) => s + t.net, 0);
-  const totalCapital = trades.reduce((s, t) => s + (t.strike * 100 * t.qty), 0);
-  const winRate = totalCapital ? (totalProfit / totalCapital) * 100 : 0;
+  const wins = trades.filter(t => t.net > 0).length;
+  const winRate = trades.length ? (wins / trades.length) * 100 : 0;
 
   const cards = [
     { label: 'Total Profit', value: '$' + totalProfit.toFixed(2) },
