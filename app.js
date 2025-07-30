@@ -11,12 +11,16 @@ let isEditing = false;
 let lineChart;
 let barChart;
 
-loadTrades();
-ensurePresetTrade();
-updateTable();
-updateSummary();
-drawCharts();
-setDefaultFormValues();
+async function init() {
+  await loadTrades();
+  ensurePresetTrade();
+  updateTable();
+  updateSummary();
+  drawCharts();
+  setDefaultFormValues();
+}
+
+init();
 editBtn.addEventListener('click', () => {
   isEditing = true;
   editBtn.style.display = 'none';
