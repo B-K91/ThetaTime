@@ -261,11 +261,44 @@ function drawBarChart() {
   });
 }
 
-function saveTrades() {
+async function saveTrades() {
   localStorage.setItem('trades', JSON.stringify(trades));
+  try {
+    await fetch('/api/trades', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(trades)
+    });
+  } catch(err) {
+    console.error('Failed to sync trades to server', err);
+  }
 }
 
-function loadTrades() {
+async function loadTrades() {
+  try {
+    const res = await fetch('/api/trades');
+    if (res.ok) {
+      const saved = await res.json();
+      if (Array.isArray(saved)) {
+        saved.forEach(t => {
+          delete t.strategy;
+          t.strike = parseFloat(t.strike);
+          t.premium = parseFloat(t.premium);
+          t.buyback = parseFloat(t.buyback) || 0;
+          t.qty = parseInt(t.qty) || 1;
+          t.commissions = parseFloat(t.commissions) || 0;
+          const gross = (t.premium - (t.buyback || 0)) * 100 * t.qty;
+          t.net = gross - t.commissions;
+          const cap = t.strike * 100 * t.qty;
+          t.percent = cap ? (t.net / cap) * 100 : 0;
+          trades.push(t);
+        });
+        return;
+      }
+    }
+  } catch(err) {
+    console.warn('Could not load from server, falling back to localStorage', err);
+  }
   const data = localStorage.getItem('trades');
   if (!data) return;
   try {
