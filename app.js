@@ -55,6 +55,8 @@ function addTrade(t) {
   t.commissions = t.commissions || 0;
   const gross = (t.premium - (t.buyback || 0)) * 100 * t.qty;
   t.net = gross - t.commissions;
+  const capital = t.strike * 100 * t.qty;
+  t.percent = capital ? (t.net / capital) * 100 : 0;
   trades.push(t);
   saveTrades();
   updateTable();
@@ -78,7 +80,8 @@ function updateTable() {
         <td contenteditable data-field="buyback">${t.buyback.toFixed(2)}</td>
         <td contenteditable data-field="qty">${t.qty}</td>
         <td contenteditable data-field="commissions">${t.commissions.toFixed(2)}</td>
-        <td>$${t.net.toFixed(2)}</td>
+        <td class="net">$${t.net.toFixed(2)}</td>
+        <td>${t.percent.toFixed(1)}%</td>
         <td><button class="delete-btn" data-id="${t.id}" title="Delete">&times;</button></td>
       `;
       tr.querySelector('.delete-btn').addEventListener('click', () => deleteTrade(t.id));
@@ -91,7 +94,8 @@ function updateTable() {
         <td>${t.buyback.toFixed(2)}</td>
         <td>${t.qty}</td>
         <td>$${t.commissions.toFixed(2)}</td>
-        <td>$${t.net.toFixed(2)}</td>
+        <td class="net">$${t.net.toFixed(2)}</td>
+        <td>${t.percent.toFixed(1)}%</td>
         <td></td>
       `;
     }
@@ -128,6 +132,8 @@ function saveEdits() {
     });
     const gross = (trade.premium - (trade.buyback || 0)) * 100 * trade.qty;
     trade.net = gross - trade.commissions;
+    const cap = trade.strike * 100 * trade.qty;
+    trade.percent = cap ? (trade.net / cap) * 100 : 0;
   });
   saveTrades();
 }
@@ -251,6 +257,8 @@ function loadTrades() {
         t.commissions = parseFloat(t.commissions) || 0;
         const gross = (t.premium - (t.buyback || 0)) * 100 * t.qty;
         t.net = gross - t.commissions;
+        const cap = t.strike * 100 * t.qty;
+        t.percent = cap ? (t.net / cap) * 100 : 0;
         trades.push(t);
       });
     }
